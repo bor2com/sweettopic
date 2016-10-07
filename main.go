@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -90,18 +91,18 @@ func main() {
 		if r.URL.Path == "/" {
 			if err := printWorkingDirectoryList(w); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				fmt.Fprint(w, err)
+				io.WriteString(w, err.Error())
 				log.Print(err)
 			}
 		} else if filepath.Ext(r.URL.Path) == ".md" {
 			if err := serveMarkdownFromRequestPath(w, r); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				fmt.Fprint(w, err)
+				io.WriteString(w, err.Error())
 				log.Print(err)
 			}
 		} else {
 			w.WriteHeader(http.StatusNotFound)
-			fmt.Fprint(w, "404 not found")
+			io.WriteString(w, "404 not found")
 		}
 	})
 
